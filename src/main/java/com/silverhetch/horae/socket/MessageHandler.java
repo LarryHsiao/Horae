@@ -1,10 +1,19 @@
 package com.silverhetch.horae.socket;
 
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 
-public interface MessageHandler {
+public class MessageHandler extends ChannelInboundHandlerAdapter {
 
-    void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception;
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        ctx.write(msg); // (1)
+        ctx.flush(); // (2)
+    }
 
-    void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception;
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        cause.printStackTrace();
+        ctx.close();
+    }
 }

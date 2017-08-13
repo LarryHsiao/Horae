@@ -36,22 +36,7 @@ public class Application extends javafx.application.Application {
 
     public static void main(String[] args) {
         try {
-            SocketServer socketServer = new SocketServer(8912, new MessageHandler() {
-                @Override
-                public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-                    ctx.write(msg); // (1)
-                    ctx.flush(); // (2)
-                }
-
-                @Override
-                public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-                    cause.printStackTrace();
-                    ctx.close();
-                }
-            });
-            socketServer.launch();
-            Thread.sleep(3000);
-            socketServer.shutdown();
+            SocketServer socketServer = new SocketServer(8912, new MessageHandler());
             socketServer.launch();
         } catch (Exception e) {
             throw new RuntimeException(e);
