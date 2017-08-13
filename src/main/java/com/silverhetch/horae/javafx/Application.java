@@ -2,7 +2,9 @@ package com.silverhetch.horae.javafx;
 
 import com.silverhetch.horae.device.Device;
 import com.silverhetch.horae.device.DeviceImpl;
+import com.silverhetch.horae.socket.MessageHandler;
 import com.silverhetch.horae.socket.SocketServer;
+import io.netty.channel.ChannelHandlerContext;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -34,9 +36,26 @@ public class Application extends javafx.application.Application {
 
     public static void main(String[] args) {
         try {
-            new SocketServer(8912).run();
-        }catch (Exception e){
+            SocketServer socketServer = new SocketServer(8912, new MessageHandler() {
+                @Override
+                public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+                    ctx.write(msg); // (1)
+                    ctx.flush(); // (2)
+                }
+
+                @Override
+                public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+                    cause.printStackTrace();
+                    ctx.close();
+                }
+            });
+            socketServer.launch();
+            Thread.sleep(3000);
+            socketServer.shutdown();
+            socketServer.launch();
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        launch(args);
     }
 }
