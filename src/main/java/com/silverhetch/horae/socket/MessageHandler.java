@@ -1,14 +1,32 @@
 package com.silverhetch.horae.socket;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.util.ReferenceCountUtil;
 
-public class MessageHandler extends ChannelInboundHandlerAdapter {
+class MessageHandler extends ChannelInboundHandlerAdapter {
+
+    private final ComputeUnit computeUnit;
+
+    public MessageHandler(ComputeUnit computeUnit) {
+        this.computeUnit = computeUnit;
+    }
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        ctx.write(msg); // (1)
-        ctx.flush(); // (2)
+    public void channelRead(ChannelHandlerContext ctx, Object inboundMessage) throws Exception {
+        ByteBuf in = (ByteBuf) inboundMessage;
+        try {
+            StringBuilder abc = new StringBuilder();
+            while (in.isReadable()) {
+                abc.append((char) in.readByte());
+            }
+            String result = computeUnit.compute(abc.toString());
+            System.out.println(abc +" :: "+ result);
+            ctx.writeAndFlush(result);
+        } finally {
+            ReferenceCountUtil.release(inboundMessage);
+        }
     }
 
     @Override

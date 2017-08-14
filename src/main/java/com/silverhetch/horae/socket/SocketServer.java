@@ -11,14 +11,14 @@ import java.util.Vector;
 public class SocketServer {
     private final int port;
     private final Vector<EventLoopGroup> eventLoops;
-    private final ChannelInboundHandlerAdapter[] messageHandlers;
+    private final ComputeUnit[] computeUnit;
     private boolean running;
 
-    // TODO: 2017/8/14 replace messageHandlers with simple request/response interface
-    public SocketServer(int port, ChannelInboundHandlerAdapter... messageHandlers) {
+    // TODO: 2017/8/14 replace computeUnit with simple request/response interface
+    public SocketServer(int port, ComputeUnit... computeUnit) {
         this.port = port;
         this.eventLoops = new Vector<>();
-        this.messageHandlers = messageHandlers;
+        this.computeUnit = computeUnit;
         this.running = false;
     }
 
@@ -39,8 +39,8 @@ public class SocketServer {
                 server.childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
-                        for (ChannelInboundHandlerAdapter messageHandler : messageHandlers) {
-                            ch.pipeline().addLast(messageHandler);
+                        for (ComputeUnit computeUnit : SocketServer.this.computeUnit) {
+                            ch.pipeline().addLast(new MessageHandler(computeUnit));
                         }
 
                     }
