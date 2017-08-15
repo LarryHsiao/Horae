@@ -1,9 +1,10 @@
 package com.silverhetch.horae.javafx;
 
+import com.silverhetch.horae.connection.SocketClient;
 import com.silverhetch.horae.device.Device;
 import com.silverhetch.horae.device.DeviceImpl;
-import com.silverhetch.horae.socket.ComputeUnit;
-import com.silverhetch.horae.socket.SocketServer;
+import com.silverhetch.horae.connection.SocketDevice;
+import com.silverhetch.horae.connection.SocketServer;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -35,12 +36,7 @@ public class Application extends javafx.application.Application {
 
     public static void main(String[] args) {
         try {
-            SocketServer socketServer = new SocketServer(8912, new ComputeUnit() {
-                @Override
-                public String compute(String message) {
-                    return "123";
-                }
-            });
+            SocketDevice socketServer = new SocketClient("192.168.0.103",8912, message -> "response");
             socketServer.launch();
         } catch (Exception e) {
             throw new RuntimeException(e);

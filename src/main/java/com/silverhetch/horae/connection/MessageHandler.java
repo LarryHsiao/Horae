@@ -1,6 +1,5 @@
-package com.silverhetch.horae.socket;
+package com.silverhetch.horae.connection;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
@@ -15,15 +14,11 @@ class MessageHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object inboundMessage) throws Exception {
-        ByteBuf in = (ByteBuf) inboundMessage;
         try {
-            StringBuilder abc = new StringBuilder();
-            while (in.isReadable()) {
-                abc.append((char) in.readByte());
-            }
-            String result = computeUnit.compute(abc.toString());
-            System.out.println(abc +" :: "+ result);
-            ctx.writeAndFlush(result);
+            String inbound = (String) inboundMessage;
+            String result = computeUnit.compute(inbound);
+            System.out.println(inbound +" :: "+ result);
+            ctx.writeAndFlush(result.getBytes());
         } finally {
             ReferenceCountUtil.release(inboundMessage);
         }
