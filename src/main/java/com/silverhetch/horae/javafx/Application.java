@@ -36,7 +36,7 @@ public class Application extends javafx.application.Application {
 
     public static void main(String[] args) {
         try {
-            SocketDevice socketServer = new SocketClient("192.168.0.103",8912, message -> "response");
+            SocketDevice socketServer = new SocketServer(8912, message -> "response");
             socketServer.launch();
         } catch (Exception e) {
             throw new RuntimeException(e);

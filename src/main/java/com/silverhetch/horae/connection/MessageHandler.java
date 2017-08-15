@@ -18,7 +18,7 @@ class MessageHandler extends ChannelInboundHandlerAdapter {
             String inbound = (String) inboundMessage;
             String result = computeUnit.compute(inbound);
             System.out.println(inbound +" :: "+ result);
-            ctx.writeAndFlush(result.getBytes());
+            ctx.writeAndFlush(result);
         } finally {
             ReferenceCountUtil.release(inboundMessage);
         }
