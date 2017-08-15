@@ -1,4 +1,4 @@
-package com.silverhetch.horae.connection;
+package com.silverhetch.horae.socket;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -9,7 +9,7 @@ import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.util.CharsetUtil;
 
-public class MessageChannelInitializer extends ChannelInitializer<SocketChannel> {
+class MessageChannelInitializer extends ChannelInitializer<SocketChannel> {
     private final ComputeUnit computeUnit;
 
     public MessageChannelInitializer(ComputeUnit computeUnit) {

@@ -1,4 +1,4 @@
-package com.silverhetch.horae.connection;
+package com.silverhetch.horae.socket;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;

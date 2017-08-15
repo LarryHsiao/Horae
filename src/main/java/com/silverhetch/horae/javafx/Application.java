@@ -1,31 +1,28 @@
 package com.silverhetch.horae.javafx;
 
-import com.silverhetch.horae.connection.SocketClient;
-import com.silverhetch.horae.device.Device;
-import com.silverhetch.horae.device.DeviceImpl;
-import com.silverhetch.horae.connection.SocketDevice;
-import com.silverhetch.horae.connection.SocketServer;
+import com.silverhetch.horae.socket.SocketDevice;
+import com.silverhetch.horae.socket.SocketServer;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class Application extends javafx.application.Application {
-    private final Device device;
+    private final SocketDevice socketDevice;
 
     public Application() {
-        this.device = new DeviceImpl();
+        this.socketDevice = new SocketServer(8912, message -> "response");
     }
 
     @Override
     public void init() throws Exception {
         super.init();
-        device.enable();
+        socketDevice.launch();
     }
 
     @Override
     public void stop() throws Exception {
         super.stop();
-        device.disable();
+        socketDevice.shutdown();
     }
 
     @Override
@@ -35,12 +32,6 @@ public class Application extends javafx.application.Application {
     }
 
     public static void main(String[] args) {
-        try {
-            SocketDevice socketServer = new SocketServer(8912, message -> "response");
-            socketServer.launch();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
         launch(args);
     }
 }
