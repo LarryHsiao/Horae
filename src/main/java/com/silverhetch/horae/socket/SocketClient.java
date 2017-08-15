@@ -28,20 +28,23 @@ public class SocketClient implements SocketDevice {
             return;
         }
         running = true;
-        new Thread(() -> {
-            try {
-                EventLoopGroup worker = new NioEventLoopGroup();
-                eventLoops.add(worker);
-                Bootstrap bootstrap = new Bootstrap();
-                bootstrap.group(worker);
-                bootstrap.channel(NioSocketChannel.class);
-                bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
-                bootstrap.handler(new MessageChannelInitializer(computeUnit));
-                ChannelFuture channelFuture = bootstrap.connect(host, port);
-                channelFuture.channel().closeFuture().sync(); // block until all EventLoopGroup shutdown
-            } catch (InterruptedException ignore) {
-            } finally {
-                running = false;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    EventLoopGroup worker = new NioEventLoopGroup();
+                    eventLoops.add(worker);
+                    Bootstrap bootstrap = new Bootstrap();
+                    bootstrap.group(worker);
+                    bootstrap.channel(NioSocketChannel.class);
+                    bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
+                    bootstrap.handler(new MessageChannelInitializer(computeUnit));
+                    ChannelFuture channelFuture = bootstrap.connect(host, port);
+                    channelFuture.channel().closeFuture().sync(); // block until all EventLoopGroup shutdown
+                } catch (InterruptedException ignore) {
+                } finally {
+                    running = false;
+                }
             }
         }).start();
     }
