@@ -8,15 +8,15 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SocketClient implements SocketDevice {
-    private final ComputeUnit computeUnit;
+class SocketClient implements SocketDevice {
+    private final MessageHandler messageHandler;
     private final List<EventLoopGroup> eventLoops;
     private final String host;
     private final int port;
     private boolean running;
 
     public SocketClient(String host, int port, ComputeUnit computeUnit) {
-        this.computeUnit = computeUnit;
+        this.messageHandler = new MessageHandler(computeUnit);
         this.running = false;
         this.eventLoops = new ArrayList<>();
         this.host = host;
@@ -38,7 +38,7 @@ public class SocketClient implements SocketDevice {
                     bootstrap.group(worker);
                     bootstrap.channel(NioSocketChannel.class);
                     bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
-                    bootstrap.handler(new MessageChannelInitializer(computeUnit));
+                    bootstrap.handler(new MessageChannelInitializer(messageHandler));
                     ChannelFuture channelFuture = bootstrap.connect(host, port);
                     channelFuture.channel().closeFuture().sync(); // block until all EventLoopGroup shutdown
                 } catch (InterruptedException ignore) {
@@ -55,5 +55,10 @@ public class SocketClient implements SocketDevice {
             eventLoop.shutdownGracefully();
         }
         eventLoops.clear();
+    }
+
+    @Override
+    public void sendMessage(String message) {
+        messageHandler.sendMessage(message);
     }
 }

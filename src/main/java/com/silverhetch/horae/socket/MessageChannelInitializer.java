@@ -10,10 +10,10 @@ import io.netty.handler.codec.string.StringEncoder;
 import io.netty.util.CharsetUtil;
 
 class MessageChannelInitializer extends ChannelInitializer<SocketChannel> {
-    private final ComputeUnit computeUnit;
+    private final MessageHandler messageHandler;
 
-    public MessageChannelInitializer(ComputeUnit computeUnit) {
-        this.computeUnit = computeUnit;
+    public MessageChannelInitializer(MessageHandler messageHandler) {
+        this.messageHandler = messageHandler;
     }
 
     @Override
@@ -22,6 +22,6 @@ class MessageChannelInitializer extends ChannelInitializer<SocketChannel> {
         pipeline.addLast("farmer", new DelimiterBasedFrameDecoder(8192, Delimiters.lineDelimiter()));
         pipeline.addLast("decoder", new StringDecoder(CharsetUtil.UTF_8));
         pipeline.addLast("encoder", new StringEncoder(CharsetUtil.UTF_8));
-        pipeline.addLast("compute", new MessageHandler(computeUnit));
+        pipeline.addLast("compute", messageHandler);
     }
 }

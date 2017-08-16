@@ -7,17 +7,17 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 import java.util.Vector;
 
-public class SocketServer implements SocketDevice {
+class SocketServer implements SocketDevice {
     private final int port;
     private final Vector<EventLoopGroup> eventLoops;
-    private final ComputeUnit computeUnit;
+    private final MessageHandler messageHandler;
     private boolean running;
 
     // TODO: 2017/8/14 replace computeUnit with simple request/response interface
     public SocketServer(int port, ComputeUnit computeUnit) {
         this.port = port;
         this.eventLoops = new Vector<>();
-        this.computeUnit = computeUnit;
+        this.messageHandler = new MessageHandler(computeUnit);
         this.running = false;
     }
 
@@ -38,7 +38,7 @@ public class SocketServer implements SocketDevice {
                     ServerBootstrap server = new ServerBootstrap();
                     server.group(entranceLoop, workerLoop);
                     server.channel(NioServerSocketChannel.class);
-                    server.childHandler(new MessageChannelInitializer(computeUnit));
+                    server.childHandler(new MessageChannelInitializer(messageHandler));
                     server.option(ChannelOption.SO_BACKLOG, 128);
                     server.childOption(ChannelOption.SO_KEEPALIVE, true);
                     ChannelFuture channelFuture = server.bind(port).sync();
@@ -50,6 +50,11 @@ public class SocketServer implements SocketDevice {
             }
         }).start();
 
+    }
+
+    @Override
+    public void sendMessage(String message) {
+        messageHandler.sendMessage(message);
     }
 
     @Override

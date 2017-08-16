@@ -1,7 +1,8 @@
 //package com.silverhetch.horae.javafx;
 //
+//import com.silverhetch.horae.socket.ComputeUnit;
+//import com.silverhetch.horae.socket.SocketConnectionImpl;
 //import com.silverhetch.horae.socket.SocketDevice;
-//import com.silverhetch.horae.socket.SocketServer;
 //import javafx.scene.Scene;
 //import javafx.scene.layout.StackPane;
 //import javafx.stage.Stage;
@@ -10,7 +11,12 @@
 //    private final SocketDevice socketDevice;
 //
 //    public Application() {
-//        this.socketDevice = new SocketServer(8912, message -> "response");
+//        this.socketDevice = new SocketConnectionImpl().server(8912, new ComputeUnit() {
+//            @Override
+//            public String compute(String message) {
+//                return "response";
+//            }
+//        });
 //    }
 //
 //    @Override
