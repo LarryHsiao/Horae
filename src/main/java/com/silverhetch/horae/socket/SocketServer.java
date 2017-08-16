@@ -13,11 +13,11 @@ class SocketServer implements SocketDevice {
     private final ChildHandler childHandler;
     private boolean running;
 
-    // TODO: 2017/8/14 replace computeUnit with simple request/response interface
-    public SocketServer(int port, ComputeUnit computeUnit) {
+    // TODO: 2017/8/14 replace messageListener with simple request/response interface
+    public SocketServer(int port, MessageListener messageListener) {
         this.port = port;
         this.eventLoops = new Vector<>();
-        this.childHandler = new ChildHandler(computeUnit);
+        this.childHandler = new ChildHandler(messageListener);
         this.running = false;
     }
 

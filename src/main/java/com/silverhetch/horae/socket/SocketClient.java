@@ -15,8 +15,8 @@ class SocketClient implements SocketDevice {
     private final int port;
     private boolean running;
 
-    public SocketClient(String host, int port, ComputeUnit computeUnit) {
-        this.childHandler = new ChildHandler(computeUnit);
+    public SocketClient(String host, int port, MessageListener messageListener) {
+        this.childHandler = new ChildHandler(messageListener);
         this.running = false;
         this.eventLoops = new ArrayList<>();
         this.host = host;

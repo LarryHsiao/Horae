@@ -7,20 +7,18 @@ import io.netty.util.ReferenceCountUtil;
 import java.util.Vector;
 
 class MessageHandler extends ChannelInboundHandlerAdapter {
-    private final ComputeUnit computeUnit;
+    private final MessageListener messageListener;
     private final Vector<ChannelHandlerContext> channels;
 
-    public MessageHandler(ComputeUnit computeUnit) {
-        this.computeUnit = computeUnit;
+    public MessageHandler(MessageListener messageListener) {
+        this.messageListener = messageListener;
         this.channels = new Vector<>();
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object inboundMessage) throws Exception {
         try {
-            String inbound = (String) inboundMessage;
-            String result = computeUnit.compute(inbound);
-            ctx.writeAndFlush(result);
+            messageListener.onReceive((String) inboundMessage);
         } finally {
             ReferenceCountUtil.release(inboundMessage);
         }

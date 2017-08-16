@@ -2,12 +2,12 @@ package com.silverhetch.horae.socket;
 
 public class SocketConnectionImpl implements SocketConnection {
     @Override
-    public SocketDevice server(int port, ComputeUnit computeUnit) {
-        return new SocketServer(port, computeUnit);
+    public SocketDevice server(int port, MessageListener messageListener) {
+        return new SocketServer(port, messageListener);
     }
 
     @Override
-    public SocketDevice client(String host, int port, ComputeUnit computeUnit) {
-        return new SocketClient(host, port, computeUnit);
+    public SocketDevice client(String host, int port, MessageListener messageListener) {
+        return new SocketClient(host, port, messageListener);
     }
 }
