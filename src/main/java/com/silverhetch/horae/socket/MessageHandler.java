@@ -7,30 +7,12 @@ import io.netty.util.ReferenceCountUtil;
 import java.util.Vector;
 
 class MessageHandler extends ChannelInboundHandlerAdapter {
-    private final Vector<ChannelHandlerContext> channels;
     private final ComputeUnit computeUnit;
+    private final Vector<ChannelHandlerContext> channels;
 
     public MessageHandler(ComputeUnit computeUnit) {
         this.computeUnit = computeUnit;
         this.channels = new Vector<>();
-    }
-
-    @Override
-    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
-        super.handlerAdded(ctx);
-        channels.add(ctx);
-    }
-
-    @Override
-    public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
-        super.handlerRemoved(ctx);
-        channels.remove(ctx);
-    }
-
-    public void sendMessage(String message) {
-        for (ChannelHandlerContext channel : channels) {
-            channel.writeAndFlush("1234");
-        }
     }
 
     @Override
@@ -41,6 +23,24 @@ class MessageHandler extends ChannelInboundHandlerAdapter {
             ctx.writeAndFlush(result);
         } finally {
             ReferenceCountUtil.release(inboundMessage);
+        }
+    }
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        super.channelActive(ctx);
+        channels.add(ctx);
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        super.channelInactive(ctx);
+        channels.remove(ctx);
+    }
+
+    public void sendMessage(String message) {
+        for (ChannelHandlerContext channel : channels) {
+            channel.writeAndFlush(message);
         }
     }
 

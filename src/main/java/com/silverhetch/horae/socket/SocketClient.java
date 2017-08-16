@@ -9,14 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 class SocketClient implements SocketDevice {
-    private final MessageHandler messageHandler;
+    private final ChildHandler childHandler;
     private final List<EventLoopGroup> eventLoops;
     private final String host;
     private final int port;
     private boolean running;
 
     public SocketClient(String host, int port, ComputeUnit computeUnit) {
-        this.messageHandler = new MessageHandler(computeUnit);
+        this.childHandler = new ChildHandler(computeUnit);
         this.running = false;
         this.eventLoops = new ArrayList<>();
         this.host = host;
@@ -38,7 +38,7 @@ class SocketClient implements SocketDevice {
                     bootstrap.group(worker);
                     bootstrap.channel(NioSocketChannel.class);
                     bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
-                    bootstrap.handler(new MessageChannelInitializer(messageHandler));
+                    bootstrap.handler(childHandler);
                     ChannelFuture channelFuture = bootstrap.connect(host, port);
                     channelFuture.channel().closeFuture().sync(); // block until all EventLoopGroup shutdown
                 } catch (InterruptedException ignore) {
@@ -59,6 +59,6 @@ class SocketClient implements SocketDevice {
 
     @Override
     public void sendMessage(String message) {
-        messageHandler.sendMessage(message);
+        childHandler.sendMessage(message);
     }
 }

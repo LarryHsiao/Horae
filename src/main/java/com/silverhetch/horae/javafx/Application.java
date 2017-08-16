@@ -23,6 +23,8 @@
 //    public void init() throws Exception {
 //        super.init();
 //        socketDevice.launch();
+//        Thread.sleep(3000);
+//        socketDevice.sendMessage("123");
 //    }
 //
 //    @Override
