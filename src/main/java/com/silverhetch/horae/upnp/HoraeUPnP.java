@@ -1,7 +1,8 @@
 package com.silverhetch.horae.upnp;
 
 public interface HoraeUPnP {
-    Device device(int socketPort);
-    ControlPoint controlPoint(DeviceListener listener);
+    boolean isLocalDevice(String host);
+    Device createDevice(int socketPort);
+    ControlPoint createControlPoint(DeviceListener listener);
     void shutdown();
 }
