@@ -1,6 +1,5 @@
 package com.silverhetch.horae.upnp;
 
-import com.sun.istack.internal.Nullable;
 import org.fourthline.cling.UpnpService;
 import org.fourthline.cling.UpnpServiceImpl;
 import org.fourthline.cling.binding.annotations.AnnotationLocalServiceBinder;
@@ -15,7 +14,7 @@ import org.fourthline.cling.registry.Registry;
 /**
  * This class used to let other device connecting to this device.
  */
-public class HoraeDevice implements UPnPDevice {
+class HoraeDevice implements Device {
     /**
      * Null if the running flag is false.
      * Notice that if this class is going more complicate then this, consider to refactor this class.
@@ -59,8 +58,8 @@ public class HoraeDevice implements UPnPDevice {
         );
 
         // Nothing we can do with the type warning below. This is the cling`s style.
-        LocalService<Horae> localService = new AnnotationLocalServiceBinder().read(Horae.class);
-        localService.setManager(new DefaultServiceManager<>(localService, Horae.class));
+        LocalService<HoraeService> localService = new AnnotationLocalServiceBinder().read(HoraeService.class);
+        localService.setManager(new DefaultServiceManager<>(localService, HoraeService.class));
         localService.getManager().getImplementation().setPort(socketServerPort);
         return new LocalDevice(identity, type, deviceDetails, localService);
     }
@@ -71,6 +70,7 @@ public class HoraeDevice implements UPnPDevice {
             return;
         }
         upnpService.shutdown();
+        upnpService = null;
         running = false;
     }
 }

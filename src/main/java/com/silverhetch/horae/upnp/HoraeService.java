@@ -10,11 +10,11 @@ import org.fourthline.cling.binding.annotations.*;
         serviceId = @UpnpServiceId("Horae"),
         serviceType = @UpnpServiceType(value = "Horae", version = 1)
 )
-public class Horae {
+public class HoraeService {
     @UpnpStateVariable(defaultValue = "8912")
     private int connectionPort;
 
-    public Horae() {
+    public HoraeService() {
         this.connectionPort = 8912;
     }
 
