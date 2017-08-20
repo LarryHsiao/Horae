@@ -20,7 +20,6 @@ public class HoraeDevice implements UPnPDevice {
      * Null if the running flag is false.
      * Notice that if this class is going more complicate then this, consider to refactor this class.
      */
-    @Nullable
     private UpnpService upnpService;
     private final int socketServerPort;
     private boolean running;
