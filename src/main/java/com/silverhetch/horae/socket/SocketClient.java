@@ -23,30 +23,29 @@ class SocketClient implements SocketDevice {
         this.port = port;
     }
 
+    /**
+     * Note: This method will block the thread until channel closed.
+     */
+    @Override
     public void launch() {
         if (running) {
             return;
         }
         running = true;
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    EventLoopGroup worker = new NioEventLoopGroup();
-                    eventLoops.add(worker);
-                    Bootstrap bootstrap = new Bootstrap();
-                    bootstrap.group(worker);
-                    bootstrap.channel(NioSocketChannel.class);
-                    bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
-                    bootstrap.handler(childHandler);
-                    ChannelFuture channelFuture = bootstrap.connect(host, port);
-                    channelFuture.channel().closeFuture().sync(); // block until all EventLoopGroup shutdown
-                } catch (InterruptedException ignore) {
-                } finally {
-                    running = false;
-                }
-            }
-        }).start();
+        try {
+            EventLoopGroup worker = new NioEventLoopGroup();
+            eventLoops.add(worker);
+            Bootstrap bootstrap = new Bootstrap();
+            bootstrap.group(worker);
+            bootstrap.channel(NioSocketChannel.class);
+            bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
+            bootstrap.handler(childHandler);
+            ChannelFuture channelFuture = bootstrap.connect(host, port);
+            channelFuture.channel().closeFuture().sync(); // block until all EventLoopGroup shutdown
+        } catch (InterruptedException ignore) {
+        } finally {
+            running = false;
+        }
     }
 
     @Override

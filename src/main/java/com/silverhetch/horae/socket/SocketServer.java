@@ -13,7 +13,6 @@ class SocketServer implements SocketDevice {
     private final ChildHandler childHandler;
     private boolean running;
 
-    // TODO: 2017/8/14 replace messageListener with simple request/response interface
     public SocketServer(int port, MessageListener messageListener) {
         this.port = port;
         this.eventLoops = new Vector<>();
@@ -21,35 +20,32 @@ class SocketServer implements SocketDevice {
         this.running = false;
     }
 
+    /**
+     * Note: this method will block until the channel closed.
+     */
     @Override
     public void launch() {
         if (running) {
             return;
         }
         running = true;
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    EventLoopGroup entranceLoop = new NioEventLoopGroup();
-                    EventLoopGroup workerLoop = new NioEventLoopGroup();
-                    eventLoops.add(workerLoop);
-                    eventLoops.add(entranceLoop);
-                    ServerBootstrap server = new ServerBootstrap();
-                    server.group(entranceLoop, workerLoop);
-                    server.channel(NioServerSocketChannel.class);
-                    server.childHandler(childHandler);
-                    server.option(ChannelOption.SO_BACKLOG, 128);
-                    server.childOption(ChannelOption.SO_KEEPALIVE, true);
-                    ChannelFuture channelFuture = server.bind(port).sync();
-                    channelFuture.channel().closeFuture().sync(); // will block until all EventViewGroup shutdown
-                } catch (InterruptedException ignore) {
-                } finally {
-                    running = false;
-                }
-            }
-        }).start();
-
+        try {
+            EventLoopGroup entranceLoop = new NioEventLoopGroup();
+            EventLoopGroup workerLoop = new NioEventLoopGroup();
+            eventLoops.add(workerLoop);
+            eventLoops.add(entranceLoop);
+            ServerBootstrap server = new ServerBootstrap();
+            server.group(entranceLoop, workerLoop);
+            server.channel(NioServerSocketChannel.class);
+            server.childHandler(childHandler);
+            server.option(ChannelOption.SO_BACKLOG, 128);
+            server.childOption(ChannelOption.SO_KEEPALIVE, true);
+            ChannelFuture channelFuture = server.bind(port).sync();
+            channelFuture.channel().closeFuture().sync(); // will block until all EventViewGroup shutdown
+        } catch (InterruptedException ignore) {
+        } finally {
+            running = false;
+        }
     }
 
     @Override

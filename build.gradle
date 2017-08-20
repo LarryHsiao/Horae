@@ -11,9 +11,13 @@ configurations{
 
 repositories {
     mavenCentral()
+    maven{
+        url "http://4thline.org/m2"
+    }
 }
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile 'io.netty:netty-all:4.1.14.Final'
+    compile 'org.fourthline.cling:cling-core:2.1.1'
 }
