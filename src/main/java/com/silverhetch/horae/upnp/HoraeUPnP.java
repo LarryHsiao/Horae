@@ -2,5 +2,6 @@ package com.silverhetch.horae.upnp;
 
 public interface HoraeUPnP {
     Device device(int socketPort);
-    ControlPoint controlPoint(HoraeDiscoverListener listener);
+    ControlPoint controlPoint(DeviceListener listener);
+    void shutdown();
 }

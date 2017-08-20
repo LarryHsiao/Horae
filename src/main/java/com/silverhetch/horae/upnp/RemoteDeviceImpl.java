@@ -8,6 +8,11 @@ class RemoteDeviceImpl implements RemoteDevice {
     }
 
     @Override
+    public String host() {
+        return remoteDevice.getIdentity().getDiscoveredOnLocalAddress().getHostAddress();
+    }
+
+    @Override
     public String identity() {
         return remoteDevice.getIdentity().toString();
     }

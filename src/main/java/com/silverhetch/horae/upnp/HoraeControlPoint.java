@@ -1,22 +1,20 @@
 package com.silverhetch.horae.upnp;
 
 import org.fourthline.cling.UpnpService;
-import org.fourthline.cling.UpnpServiceImpl;
 import org.fourthline.cling.model.message.header.*;
 import org.fourthline.cling.model.meta.RemoteDevice;
 import org.fourthline.cling.model.types.UDADeviceType;
 import org.fourthline.cling.registry.*;
 
 class HoraeControlPoint implements ControlPoint {
-    /**
-     * Null if the running flag is false.
-     * Notice that if this class is going more complicate then this, consider to refactor this class.
-     */
-    private UpnpService upnpService;
-    private final HoraeDiscoverListener listener;
+    private final UpnpService upnpService;
+    private final DeviceListener listener;
+    private final RegisterListener registerListener;
     private boolean running;
 
-    public HoraeControlPoint(HoraeDiscoverListener listener) {
+    public HoraeControlPoint(UpnpService upnpService, DeviceListener listener) {
+        this.registerListener = new RegisterListener();
+        this.upnpService = upnpService;
         this.listener = listener;
         this.running = false;
     }
@@ -27,19 +25,7 @@ class HoraeControlPoint implements ControlPoint {
             return;
         }
         running = true;
-        upnpService = new UpnpServiceImpl(new DefaultRegistryListener() {
-            @Override
-            public void remoteDeviceAdded(Registry registry, RemoteDevice device) {
-                super.remoteDeviceAdded(registry, device);
-                listener.onDeviceDiscovered(new RemoteDeviceImpl(device));
-            }
-
-            @Override
-            public void remoteDeviceRemoved(Registry registry, RemoteDevice device) {
-                super.remoteDeviceRemoved(registry, device);
-                listener.onDeviceDiscovered(new RemoteDeviceImpl(device));
-            }
-        });
+        upnpService.getRegistry().addListener(registerListener);
         upnpService.getControlPoint().search(
                 new UDADeviceTypeHeader(new UDADeviceType("Horae"))
         );
@@ -50,8 +36,21 @@ class HoraeControlPoint implements ControlPoint {
         if (!running) {
             return;
         }
-        upnpService.shutdown();
-        upnpService = null;
+        upnpService.getRegistry().removeListener(registerListener);
         running = false;
+    }
+
+    private class RegisterListener extends DefaultRegistryListener {
+        @Override
+        public void remoteDeviceAdded(Registry registry, RemoteDevice device) {
+            super.remoteDeviceAdded(registry, device);
+            listener.onDeviceDiscovered(new RemoteDeviceImpl(device));
+        }
+
+        @Override
+        public void remoteDeviceRemoved(Registry registry, RemoteDevice device) {
+            super.remoteDeviceRemoved(registry, device);
+            listener.onDeviceDiscovered(new RemoteDeviceImpl(device));
+        }
     }
 }

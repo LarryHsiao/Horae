@@ -1,7 +1,6 @@
 package com.silverhetch.horae.upnp;
 
 import org.fourthline.cling.UpnpService;
-import org.fourthline.cling.UpnpServiceImpl;
 import org.fourthline.cling.binding.annotations.AnnotationLocalServiceBinder;
 import org.fourthline.cling.model.DefaultServiceManager;
 import org.fourthline.cling.model.ValidationException;
@@ -15,17 +14,16 @@ import org.fourthline.cling.registry.Registry;
  * This class used to let other device connecting to this device.
  */
 class HoraeDevice implements Device {
-    /**
-     * Null if the running flag is false.
-     * Notice that if this class is going more complicate then this, consider to refactor this class.
-     */
-    private UpnpService upnpService;
+    private final UpnpService upnpService;
     private final int socketServerPort;
+    private final UDN udn;
     private boolean running;
 
-    public HoraeDevice(int socketServerPort) {
+    public HoraeDevice(UpnpService upnpService, int socketServerPort) {
+        this.upnpService = upnpService;
         this.running = false;
         this.socketServerPort = socketServerPort;
+        this.udn = UDN.uniqueSystemIdentifier("Horae");
     }
 
     @Override
@@ -35,7 +33,6 @@ class HoraeDevice implements Device {
         }
         running = true;
         try {
-            upnpService = new UpnpServiceImpl();
             Registry registry = upnpService.getRegistry();
             registry.addDevice(createDevice());
         } catch (ValidationException e) {
@@ -44,7 +41,6 @@ class HoraeDevice implements Device {
     }
 
     private LocalDevice createDevice() throws ValidationException {
-        UDN udn = UDN.uniqueSystemIdentifier("Horae");
         DeviceIdentity identity = new DeviceIdentity(udn);
         DeviceType type = new UDADeviceType("Horae", 1);
         DeviceDetails deviceDetails = new DeviceDetails(
@@ -69,8 +65,7 @@ class HoraeDevice implements Device {
         if (!running) {
             return;
         }
-        upnpService.shutdown();
-        upnpService = null;
+        upnpService.getRegistry().removeDevice(udn);
         running = false;
     }
 }
