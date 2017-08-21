@@ -9,10 +9,10 @@ public class Horae implements MessageListener {
     private final SocketDevice socketDevice;
     private final HoraeUPnP horaeUPnP;
 
-    public Horae() {
-        this.horaeUPnP = new HoraeUPnPImpl();
+    public Horae(HoraeUPnP horaeUPnP) {
+        this.horaeUPnP = horaeUPnP;
         this.socketDevice = new AutoConnectionSocketDevice(
-                horaeUPnP,
+                this.horaeUPnP,
                 new SocketConnectionImpl(),
                 this);
     }
