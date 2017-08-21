@@ -50,7 +50,7 @@ class HoraeControlPoint implements ControlPoint {
         @Override
         public void remoteDeviceRemoved(Registry registry, RemoteDevice device) {
             super.remoteDeviceRemoved(registry, device);
-            listener.onDeviceDiscovered(new RemoteDeviceImpl(device));
+            listener.onDeviceLeave(new RemoteDeviceImpl(device));
         }
     }
 }
