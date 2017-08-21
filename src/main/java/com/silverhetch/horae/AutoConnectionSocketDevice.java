@@ -24,7 +24,7 @@ public class AutoConnectionSocketDevice implements SocketDevice, DeviceListener 
     public AutoConnectionSocketDevice(HoraeUPnP horaeUPnP, SocketConnection socketConnection, MessageListener messageListener) {
         this.remoteDeviceMap = new HashMap<>();
         this.horaeUPnP = horaeUPnP;
-        this.controlPoint = horaeUPnP.controlPoint(this);
+        this.controlPoint = horaeUPnP.createControlPoint(this);
         this.socketConnection = socketConnection;
         this.messageListener = messageListener;
         this.socketDevice = createSocketServer();
@@ -59,10 +59,11 @@ public class AutoConnectionSocketDevice implements SocketDevice, DeviceListener 
     @Override
     public void onDeviceDiscovered(RemoteDevice remoteDevice) {
         if (remoteDeviceMap.size() == 0) {
-//            socketDevice.shutdown();
-//            socketDevice = socketConnection.client("192.168.0.111", PORT, messageListener);
+            socketDevice.shutdown();
+            socketDevice = socketConnection.client(remoteDevice.host(), PORT, messageListener);
+            launchSocketDeviceWithThread();
         }
-//        remoteDeviceMap.put(remoteDevice.identity(), remoteDevice);
+        remoteDeviceMap.put(remoteDevice.identity(), remoteDevice);
     }
 
     @Override
@@ -71,10 +72,11 @@ public class AutoConnectionSocketDevice implements SocketDevice, DeviceListener 
         if (remoteDeviceMap.size() == 0) {
             socketDevice.shutdown();
             socketDevice = createSocketServer();
+            launchSocketDeviceWithThread();
         }
     }
 
     private SocketDevice createSocketServer() {
-        return new UPnPSocketDevice(socketConnection.server(PORT, messageListener), horaeUPnP.device(PORT));
+        return new UPnPSocketDevice(socketConnection.server(PORT, messageListener), horaeUPnP.createDevice(PORT));
     }
 }
