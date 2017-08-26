@@ -1,9 +1,16 @@
 package com.silverhetch.horae.upnp;
 
 import org.fourthline.cling.UpnpService;
+import org.fourthline.cling.controlpoint.ActionCallback;
+import org.fourthline.cling.model.action.ActionArgumentValue;
+import org.fourthline.cling.model.action.ActionInvocation;
+import org.fourthline.cling.model.message.UpnpResponse;
 import org.fourthline.cling.model.message.header.*;
+import org.fourthline.cling.model.meta.Action;
 import org.fourthline.cling.model.meta.RemoteDevice;
+import org.fourthline.cling.model.meta.Service;
 import org.fourthline.cling.model.types.UDADeviceType;
+import org.fourthline.cling.model.types.UDAServiceId;
 import org.fourthline.cling.registry.*;
 
 class HoraeControlPoint implements ControlPoint {
@@ -42,9 +49,24 @@ class HoraeControlPoint implements ControlPoint {
 
     private class RegisterListener extends DefaultRegistryListener {
         @Override
-        public void remoteDeviceAdded(Registry registry, RemoteDevice device) {
+        public void remoteDeviceAdded(Registry registry, final RemoteDevice device) {
             super.remoteDeviceAdded(registry, device);
             listener.onDeviceDiscovered(new RemoteDeviceImpl(device));
+            Service service = device.findService(new UDAServiceId("Horae"));
+            Action action = service.getAction("connectionPort");
+            ActionInvocation connectionPortInvoking = new ActionInvocation(action); // nothing i can do with the type warning.The cling`s style.
+            upnpService.getControlPoint().execute(new ActionCallback(connectionPortInvoking) {
+                @Override
+                public void success(ActionInvocation invocation) {
+                    ActionArgumentValue status = invocation.getOutput("ConnectionPort");
+                    String value = (String) status.getValue();
+                }
+
+                @Override
+                public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
+
+                }
+            });
         }
 
         @Override
