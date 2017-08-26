@@ -1,6 +1,8 @@
 package com.silverhetch.horae.socket;
 
+import com.silverhetch.horae.upnp.HoraeUPnP;
+
 public interface SocketConnection {
-    SocketDevice server(int port, MessageListener messageListener);
+    SocketDevice server(HoraeUPnP horaeUPnP, MessageListener messageListener);
     SocketDevice client(String host, int port, MessageListener messageListener);
 }

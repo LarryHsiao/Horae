@@ -12,7 +12,6 @@ import java.util.Map;
  * Auto change the socketDevice to Service/client according there is Horae device in the network, launch SocketServer when no device exist.
  */
 public class AutoConnectionSocketDevice implements SocketDevice, DeviceListener {
-    private static final int PORT = 8912;
     private final Map<String, RemoteDevice> remoteDeviceMap;
     private final ControlPoint controlPoint;
     private final SocketConnection socketConnection;
@@ -58,25 +57,25 @@ public class AutoConnectionSocketDevice implements SocketDevice, DeviceListener 
 
     @Override
     public void onDeviceDiscovered(RemoteDevice remoteDevice) {
-        if (remoteDeviceMap.size() == 0) {
-            socketDevice.shutdown();
-            socketDevice = socketConnection.client(remoteDevice.host(), PORT, messageListener);
-            launchSocketDeviceWithThread();
-        }
-        remoteDeviceMap.put(remoteDevice.identity(), remoteDevice);
+//        if (remoteDeviceMap.size() == 0) {
+//            socketDevice.shutdown();
+//            socketDevice = socketConnection.client(remoteDevice.host(), 8912, messageListener);
+//            launchSocketDeviceWithThread();
+//        }
+//        remoteDeviceMap.put(remoteDevice.identity(), remoteDevice);
     }
 
     @Override
     public void onDeviceLeave(RemoteDevice remoteDevice) {
-        remoteDeviceMap.remove(remoteDevice.identity());
-        if (remoteDeviceMap.size() == 0) {
-            socketDevice.shutdown();
-            socketDevice = createSocketServer();
-            launchSocketDeviceWithThread();
-        }
+//        remoteDeviceMap.remove(remoteDevice.identity());
+//        if (remoteDeviceMap.size() == 0) {
+//            socketDevice.shutdown();
+//            socketDevice = createSocketServer();
+//            launchSocketDeviceWithThread();
+//        }
     }
 
     private SocketDevice createSocketServer() {
-        return new UPnPSocketDevice(socketConnection.server(PORT, messageListener), horaeUPnP.createDevice(PORT));
+        return socketConnection.server(horaeUPnP, messageListener);
     }
 }

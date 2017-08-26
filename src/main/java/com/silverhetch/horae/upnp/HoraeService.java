@@ -23,7 +23,7 @@ public class HoraeService {
     }
 
     @UpnpAction(out = @UpnpOutputArgument(name = "ConnectionPort"))
-    public int connectionPort() {
+    public int ConnectionPort() {
         return connectionPort;
     }
 }
