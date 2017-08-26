@@ -52,21 +52,21 @@ class HoraeControlPoint implements ControlPoint {
         public void remoteDeviceAdded(Registry registry, final RemoteDevice device) {
             super.remoteDeviceAdded(registry, device);
             listener.onDeviceDiscovered(new RemoteDeviceImpl(device));
-            Service service = device.findService(new UDAServiceId("Horae"));
-            Action action = service.getAction("connectionPort");
-            ActionInvocation connectionPortInvoking = new ActionInvocation(action); // nothing i can do with the type warning.The cling`s style.
-            upnpService.getControlPoint().execute(new ActionCallback(connectionPortInvoking) {
-                @Override
-                public void success(ActionInvocation invocation) {
-                    ActionArgumentValue status = invocation.getOutput("ConnectionPort");
-                    String value = (String) status.getValue();
-                }
-
-                @Override
-                public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
-
-                }
-            });
+//            Service service = device.findService(new UDAServiceId("Horae"));
+//            Action action = service.getAction("ConnectionPort");
+//            ActionInvocation connectionPortInvoking = new ActionInvocation(action); // nothing i can do with the type warning.The cling`s style.
+//            upnpService.getControlPoint().execute(new ActionCallback(connectionPortInvoking) {
+//                @Override
+//                public void success(ActionInvocation invocation) {
+//                    ActionArgumentValue status = invocation.getOutput("ConnectionPort");
+//                    String value = (String) status.getValue();
+//                }
+//
+//                @Override
+//                public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
+//
+//                }
+//            });
         }
 
         @Override
