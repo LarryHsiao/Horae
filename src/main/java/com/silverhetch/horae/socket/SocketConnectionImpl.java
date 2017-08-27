@@ -9,7 +9,7 @@ public class SocketConnectionImpl implements SocketConnection {
     }
 
     @Override
-    public SocketDevice client(String host, int port, MessageListener messageListener) {
-        return new SocketClient(host, port, messageListener);
+    public SocketDevice client(String host, int port, int priority, MessageListener messageListener) {
+        return new SocketClient(host, port, priority, messageListener);
     }
 }

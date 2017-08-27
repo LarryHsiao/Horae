@@ -13,10 +13,12 @@ class SocketClient implements SocketDevice {
     private final List<EventLoopGroup> eventLoops;
     private final String host;
     private final int port;
+    private final int priority;
     private boolean running;
 
-    public SocketClient(String host, int port, MessageListener messageListener) {
+    public SocketClient(String host, int port, int priority, MessageListener messageListener) {
         this.childHandler = new ChildHandler(messageListener);
+        this.priority = priority;
         this.running = false;
         this.eventLoops = new ArrayList<>();
         this.host = host;
@@ -46,6 +48,11 @@ class SocketClient implements SocketDevice {
         } finally {
             running = false;
         }
+    }
+
+    @Override
+    public int priority() {
+        return priority;
     }
 
     @Override
