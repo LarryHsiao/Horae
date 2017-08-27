@@ -4,4 +4,5 @@ public interface SocketDevice {
     void launch();
     void sendMessage(String message);
     void shutdown();
+    int priority();
 }

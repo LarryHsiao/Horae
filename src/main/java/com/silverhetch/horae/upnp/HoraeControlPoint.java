@@ -51,28 +51,31 @@ class HoraeControlPoint implements ControlPoint {
         @Override
         public void remoteDeviceAdded(Registry registry, final RemoteDevice device) {
             super.remoteDeviceAdded(registry, device);
-            listener.onDeviceDiscovered(new RemoteDeviceImpl(device));
-//            Service service = device.findService(new UDAServiceId("Horae"));
-//            Action action = service.getAction("ConnectionPort");
-//            ActionInvocation connectionPortInvoking = new ActionInvocation(action); // nothing i can do with the type warning.The cling`s style.
-//            upnpService.getControlPoint().execute(new ActionCallback(connectionPortInvoking) {
-//                @Override
-//                public void success(ActionInvocation invocation) {
-//                    ActionArgumentValue status = invocation.getOutput("ConnectionPort");
-//                    String value = (String) status.getValue();
-//                }
-//
-//                @Override
-//                public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
-//
-//                }
-//            });
+            try {
+                Service service = device.findService(new UDAServiceId("Horae"));
+                Action action = service.getAction("ConnectionPort");
+                ActionInvocation connectionPortInvoking = new ActionInvocation(action); // nothing i can do with the type warning.The cling`s style.
+                upnpService.getControlPoint().execute(new ActionCallback(connectionPortInvoking) {
+                    @Override
+                    public void success(ActionInvocation invocation) {
+                        ActionArgumentValue argument = invocation.getOutput("ConnectionPort");
+                        Integer port = (Integer) argument.getValue();
+                        listener.onDeviceDiscovered(new RemoteDeviceImpl(device, port));
+                    }
+
+                    @Override
+                    public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
+                        // ignore service not recognized
+                    }
+                });
+            }catch (Exception ignore){ // ignore if service not recognized.
+            }
         }
 
         @Override
         public void remoteDeviceRemoved(Registry registry, RemoteDevice device) {
             super.remoteDeviceRemoved(registry, device);
-            listener.onDeviceLeave(new RemoteDeviceImpl(device));
+            listener.onDeviceLeave(new RemoteDeviceImpl(device, 0));
         }
     }
 }
