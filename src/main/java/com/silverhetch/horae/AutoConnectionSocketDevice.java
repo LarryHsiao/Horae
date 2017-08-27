@@ -83,9 +83,7 @@ public class AutoConnectionSocketDevice implements SocketDevice, DeviceListener 
         if (targetDevice.priority() != newTarget.priority()) {
             targetDevice.shutdown();
             targetDevice = newTarget;
-            if (targetDevice.priority() != serverDevice.priority()) {
-                launchSocketDeviceWithThread();
-            }
+            launchSocketDeviceWithThread();
         }
     }
 

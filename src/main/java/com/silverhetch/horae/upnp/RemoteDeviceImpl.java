@@ -11,7 +11,7 @@ class RemoteDeviceImpl implements RemoteDevice {
 
     @Override
     public String host() {
-        return remoteDevice.getIdentity().getDiscoveredOnLocalAddress().getHostAddress();
+        return remoteDevice.getIdentity().getDescriptorURL().getHost();
     }
 
     @Override
