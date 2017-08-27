@@ -65,6 +65,6 @@ class SocketClient implements SocketDevice {
 
     @Override
     public void sendMessage(String message) {
-        childHandler.sendMessage(message);
+        childHandler.sendMessage(message+"\n");
     }
 }
