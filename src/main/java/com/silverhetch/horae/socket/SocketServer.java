@@ -65,7 +65,6 @@ class SocketServer implements SocketDevice {
         } finally {
             if (upnpDevice != null) {
                 upnpDevice.shutdown();
-                upnpDevice = null;
             }
             running = false;
         }
