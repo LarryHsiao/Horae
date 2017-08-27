@@ -25,16 +25,6 @@ class RemoteDeviceImpl implements RemoteDevice {
     }
 
     @Override
-    public int port() {
-        return port;
-    }
-
-    @Override
-    public int priority() {
-        return remoteDevice.getIdentity().toString().hashCode();
-    }
-
-    @Override
     public String identity() {
         return remoteDevice.getIdentity().toString();
     }
