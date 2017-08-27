@@ -19,15 +19,15 @@ class HoraeDevice implements Device {
     private final UDN udn;
     private boolean running;
 
-    public HoraeDevice(UDN udn,UpnpService upnpService, int socketServerPort) {
+    public HoraeDevice(UDN udn, UpnpService upnpService, int socketServerPort) {
         this.upnpService = upnpService;
         this.running = false;
         this.socketServerPort = socketServerPort;
         this.udn = udn;
     }
 
-    public HoraeDevice(UpnpService upnpService,int socketServerPort){
-        this(UDN.uniqueSystemIdentifier("Horae"),upnpService,socketServerPort);
+    public HoraeDevice(UpnpService upnpService, int socketServerPort) {
+        this(UDN.uniqueSystemIdentifier("Horae"), upnpService, socketServerPort);
     }
 
     @Override
@@ -62,6 +62,11 @@ class HoraeDevice implements Device {
         localService.setManager(new DefaultServiceManager<>(localService, HoraeService.class));
         localService.getManager().getImplementation().setPort(socketServerPort);
         return new LocalDevice(identity, type, deviceDetails, localService);
+    }
+
+    @Override
+    public int priority() {
+        return udn.toString().hashCode();
     }
 
     @Override

@@ -3,7 +3,10 @@ package com.silverhetch.horae;
 import com.silverhetch.horae.socket.MessageListener;
 import com.silverhetch.horae.socket.SocketConnection;
 import com.silverhetch.horae.socket.SocketDevice;
-import com.silverhetch.horae.upnp.*;
+import com.silverhetch.horae.upnp.ControlPoint;
+import com.silverhetch.horae.upnp.DeviceListener;
+import com.silverhetch.horae.upnp.HoraeUPnP;
+import com.silverhetch.horae.upnp.RemoteDevice;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,18 +18,18 @@ public class AutoConnectionSocketDevice implements SocketDevice, DeviceListener 
     private final Map<String, RemoteDevice> remoteDeviceMap;
     private final ControlPoint controlPoint;
     private final SocketConnection socketConnection;
-    private final HoraeUPnP horaeUPnP;
     private final MessageListener messageListener;
-    private SocketDevice socketDevice;
+    private final SocketDevice serverDevice;
+    private SocketDevice targetDevice;
 
 
     public AutoConnectionSocketDevice(HoraeUPnP horaeUPnP, SocketConnection socketConnection, MessageListener messageListener) {
         this.remoteDeviceMap = new HashMap<>();
-        this.horaeUPnP = horaeUPnP;
         this.controlPoint = horaeUPnP.createControlPoint(this);
         this.socketConnection = socketConnection;
         this.messageListener = messageListener;
-        this.socketDevice = createSocketServer();
+        this.serverDevice = socketConnection.server(horaeUPnP, messageListener);
+        this.targetDevice = serverDevice;
     }
 
     @Override
@@ -39,43 +42,61 @@ public class AutoConnectionSocketDevice implements SocketDevice, DeviceListener 
         new Thread(new Runnable() {
             @Override
             public void run() {
-                socketDevice.launch();
+                targetDevice.launch();
             }
         }).start();
     }
 
     @Override
     public void sendMessage(String message) {
-        socketDevice.sendMessage(message);
+        targetDevice.sendMessage(message);
     }
 
     @Override
     public void shutdown() {
         controlPoint.shutdown();
-        socketDevice.shutdown();
+        targetDevice.shutdown();
+    }
+
+    @Override
+    public int priority() {
+        return targetDevice.priority();
     }
 
     @Override
     public void onDeviceDiscovered(RemoteDevice remoteDevice) {
-//        if (remoteDeviceMap.size() == 0) {
-//            socketDevice.shutdown();
-//            socketDevice = socketConnection.client(remoteDevice.host(), 8912, messageListener);
-//            launchSocketDeviceWithThread();
-//        }
-//        remoteDeviceMap.put(remoteDevice.identity(), remoteDevice);
+        remoteDeviceMap.put(remoteDevice.identity(), remoteDevice);
+        changeTargetDeviceIfNeeded();
     }
 
     @Override
     public void onDeviceLeave(RemoteDevice remoteDevice) {
-//        remoteDeviceMap.remove(remoteDevice.identity());
-//        if (remoteDeviceMap.size() == 0) {
-//            socketDevice.shutdown();
-//            socketDevice = createSocketServer();
-//            launchSocketDeviceWithThread();
-//        }
+        remoteDeviceMap.remove(remoteDevice.identity());
+        changeTargetDeviceIfNeeded();
     }
 
-    private SocketDevice createSocketServer() {
-        return socketConnection.server(horaeUPnP, messageListener);
+    /**
+     * Determine the device which has highest priority and connect to it if it is not connected.
+     */
+    private void changeTargetDeviceIfNeeded() {
+        SocketDevice newTarget = determineTargetDevice();
+        if (targetDevice.priority() != newTarget.priority()) {
+            targetDevice.shutdown();
+            targetDevice = newTarget;
+            if (targetDevice.priority() != serverDevice.priority()) {
+                launchSocketDeviceWithThread();
+            }
+        }
+    }
+
+    private SocketDevice determineTargetDevice() {
+        SocketDevice socketDevice = serverDevice;
+        for (Map.Entry<String, RemoteDevice> deviceEntry : remoteDeviceMap.entrySet()) {
+            if (deviceEntry.getValue().priority() > socketDevice.priority()) {
+                RemoteDevice remoteDevice = deviceEntry.getValue();
+                socketDevice = socketConnection.client(remoteDevice.host(), remoteDevice.port(), remoteDevice.priority(), messageListener);
+            }
+        }
+        return socketDevice;
     }
 }

@@ -7,13 +7,13 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
-import java.net.BindException;
 import java.util.Vector;
 
 class SocketServer implements SocketDevice {
     private final Vector<EventLoopGroup> eventLoops;
     private final ChildHandler childHandler;
     private final HoraeUPnP horaeUPnP;
+    private Device upnpDevice;
     private int port;
     private boolean running;
 
@@ -23,6 +23,11 @@ class SocketServer implements SocketDevice {
         this.eventLoops = new Vector<>();
         this.childHandler = new ChildHandler(messageListener);
         this.running = false;
+    }
+
+    @Override
+    public int priority() {
+        return upnpDevice.priority();
     }
 
     /**
@@ -51,16 +56,16 @@ class SocketServer implements SocketDevice {
      * UPnP Server available as long as Socket Server available.
      */
     private void launchWithUpnpDevice(ServerBootstrap server) {
-        Device device = null;
         try {
             ChannelFuture channelFuture = bindPort(server);
-            device = horaeUPnP.createDevice(port);
-            device.launch();
+            upnpDevice = horaeUPnP.createDevice(port);
+            upnpDevice.launch();
             channelFuture.channel().closeFuture().sync(); // will block until all EventViewGroup shutdown
         } catch (InterruptedException ignore) {
         } finally {
-            if (device != null) {
-                device.shutdown();
+            if (upnpDevice != null) {
+                upnpDevice.shutdown();
+                upnpDevice = null;
             }
             running = false;
         }
