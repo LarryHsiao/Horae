@@ -12,6 +12,7 @@
     <orderEntry type="module" module-name="horae_main" />
     <orderEntry type="library" name="Gradle: io.netty:netty-all:4.1.14.Final" level="project" />
     <orderEntry type="library" name="Gradle: org.fourthline.cling:cling-core:2.1.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.silverhetch:clotho:1.0.0" level="project" />
     <orderEntry type="library" name="Gradle: junit:junit:4.12" level="project" />
     <orderEntry type="library" name="Gradle: org.seamless:seamless-util:1.1.1" level="project" />
     <orderEntry type="library" name="Gradle: org.seamless:seamless-http:1.1.1" level="project" />
