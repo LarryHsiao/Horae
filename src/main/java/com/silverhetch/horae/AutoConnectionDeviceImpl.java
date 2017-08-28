@@ -14,24 +14,31 @@ import java.util.Map;
 /**
  * Auto change the socketDevice to Service/client according there is Horae device in the network, launch SocketServer when no device exist.
  */
-public class AutoConnectionSocketDevice implements SocketDevice, DeviceListener {
+public class AutoConnectionDeviceImpl implements AutoConnectionDevice, DeviceListener {
     private final Map<String, RemoteDevice> remoteDeviceMap;
     private final ControlPoint controlPoint;
     private final SocketConnection socketConnection;
     private final MessageListener messageListener;
     private final DeviceStatusListener deviceStatusListener;
     private final SocketDevice serverDevice;
+    private DeviceStatus deviceStatus;
     private SocketDevice targetDevice;
 
 
-    public AutoConnectionSocketDevice(HoraeUPnP horaeUPnP, SocketConnection socketConnection, MessageListener messageListener, DeviceStatusListener deviceStatusListener) {
+    public AutoConnectionDeviceImpl(HoraeUPnP horaeUPnP, SocketConnection socketConnection, MessageListener messageListener, DeviceStatusListener deviceStatusListener) {
         this.remoteDeviceMap = new HashMap<>();
         this.controlPoint = horaeUPnP.createControlPoint(this);
         this.socketConnection = socketConnection;
         this.messageListener = messageListener;
         this.deviceStatusListener = deviceStatusListener;
+        this.deviceStatus = new DeviceStatusImpl(true);
         this.serverDevice = socketConnection.server(horaeUPnP, messageListener);
         this.targetDevice = serverDevice;
+    }
+
+    @Override
+    public DeviceStatus deviceStatus() {
+        return deviceStatus;
     }
 
     @Override
@@ -61,11 +68,6 @@ public class AutoConnectionSocketDevice implements SocketDevice, DeviceListener 
     }
 
     @Override
-    public int priority() {
-        return targetDevice.priority();
-    }
-
-    @Override
     public void onDeviceDiscovered(RemoteDevice remoteDevice) {
         remoteDeviceMap.put(remoteDevice.identity(), remoteDevice);
         changeTargetDeviceIfNeeded();
@@ -87,7 +89,8 @@ public class AutoConnectionSocketDevice implements SocketDevice, DeviceListener 
             targetDevice = newTarget;
             launchSocketDeviceWithThread();
             boolean master = (serverDevice.priority() == newTarget.priority());
-            deviceStatusListener.onStatusChanged(new DeviceStatusImpl(master));
+            deviceStatus = new DeviceStatusImpl(master);
+            deviceStatusListener.onStatusChanged(deviceStatus);
         }
     }
 

@@ -6,16 +6,21 @@ import com.silverhetch.horae.socket.SocketDevice;
 import com.silverhetch.horae.upnp.*;
 
 public class HoraeImpl implements Horae, MessageListener {
-    private final SocketDevice socketDevice;
+    private final AutoConnectionDevice socketDevice;
     private final HoraeUPnP horaeUPnP;
 
     public HoraeImpl(HoraeUPnP horaeUPnP, DeviceStatusListener deviceStatusListener) {
         this.horaeUPnP = horaeUPnP;
-        this.socketDevice = new AutoConnectionSocketDevice(
+        this.socketDevice = new AutoConnectionDeviceImpl(
                 this.horaeUPnP,
                 new SocketConnectionImpl(),
                 this,
                 deviceStatusListener);
+    }
+
+    @Override
+    public DeviceStatus deviceStatus() {
+        return socketDevice.deviceStatus();
     }
 
     @Override
