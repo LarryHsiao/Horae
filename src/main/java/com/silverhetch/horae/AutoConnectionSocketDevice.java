@@ -19,15 +19,17 @@ public class AutoConnectionSocketDevice implements SocketDevice, DeviceListener 
     private final ControlPoint controlPoint;
     private final SocketConnection socketConnection;
     private final MessageListener messageListener;
+    private final DeviceStatusListener deviceStatusListener;
     private final SocketDevice serverDevice;
     private SocketDevice targetDevice;
 
 
-    public AutoConnectionSocketDevice(HoraeUPnP horaeUPnP, SocketConnection socketConnection, MessageListener messageListener) {
+    public AutoConnectionSocketDevice(HoraeUPnP horaeUPnP, SocketConnection socketConnection, MessageListener messageListener, DeviceStatusListener deviceStatusListener) {
         this.remoteDeviceMap = new HashMap<>();
         this.controlPoint = horaeUPnP.createControlPoint(this);
         this.socketConnection = socketConnection;
         this.messageListener = messageListener;
+        this.deviceStatusListener = deviceStatusListener;
         this.serverDevice = socketConnection.server(horaeUPnP, messageListener);
         this.targetDevice = serverDevice;
     }
@@ -84,6 +86,8 @@ public class AutoConnectionSocketDevice implements SocketDevice, DeviceListener 
             targetDevice.shutdown();
             targetDevice = newTarget;
             launchSocketDeviceWithThread();
+            boolean master = (serverDevice.priority() == newTarget.priority());
+            deviceStatusListener.onStatusChanged(new DeviceStatusImpl(master));
         }
     }
 

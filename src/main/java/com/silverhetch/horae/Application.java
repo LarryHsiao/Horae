@@ -6,29 +6,34 @@
 //import javafx.stage.Stage;
 //import org.fourthline.cling.UpnpServiceImpl;
 //
-//public class Application extends javafx.application.Application {
-//    private final Horae horae;
+//public class Application extends javafx.application.Application implements DeviceStatusListener {
+//    private final HoraeImpl horaeImpl;
 //
 //    public Application() {
-//        this.horae = new Horae(new HoraeUPnPImpl(new UpnpServiceImpl()));
+//        this.horaeImpl = new HoraeImpl(new HoraeUPnPImpl(new UpnpServiceImpl()), this);
 //    }
 //
 //    @Override
 //    public void init() throws Exception {
 //        super.init();
-//        horae.launch();
+//        horaeImpl.launch();
 //    }
 //
 //    @Override
 //    public void stop() throws Exception {
 //        super.stop();
-//        horae.shutdown();
+//        horaeImpl.shutdown();
 //    }
 //
 //    @Override
 //    public void start(Stage primaryStage) throws Exception {
 //        primaryStage.setScene(new Scene(new StackPane(), 300, 300));
 //        primaryStage.show();
+//    }
+//
+//    @Override
+//    public void onStatusChanged(DeviceStatus status) {
+//        System.out.println("Now this device is master? " + status.isMaster());
 //    }
 //
 //    public static void main(String[] args) {
