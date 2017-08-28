@@ -7,18 +7,18 @@ import io.netty.util.ReferenceCountUtil;
 import java.util.Vector;
 
 class MessageHandler extends ChannelInboundHandlerAdapter {
-    private final MessageListener messageListener;
+    private final SocketEvent socketEvent;
     private final Vector<ChannelHandlerContext> channels;
 
-    public MessageHandler(MessageListener messageListener) {
-        this.messageListener = messageListener;
+    public MessageHandler(SocketEvent socketEvent) {
+        this.socketEvent = socketEvent;
         this.channels = new Vector<>();
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object inboundMessage) throws Exception {
         try {
-            messageListener.onReceive((String) inboundMessage);
+            socketEvent.onReceive((String) inboundMessage);
         } finally {
             ReferenceCountUtil.release(inboundMessage);
         }
@@ -44,7 +44,7 @@ class MessageHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        cause.printStackTrace();
+        socketEvent.onError(cause);
         ctx.close();
     }
 }

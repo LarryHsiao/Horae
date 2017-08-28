@@ -13,11 +13,11 @@ import java.util.Vector;
 
 class ChildHandler extends ChannelInitializer<SocketChannel> {
 
-    private final MessageListener messageListener;
+    private final SocketEvent socketEvent;
     private final Vector<MessageHandler> messageHandlers;
 
-    public ChildHandler(MessageListener messageListener) {
-        this.messageListener = messageListener;
+    public ChildHandler(SocketEvent socketEvent) {
+        this.socketEvent = socketEvent;
         this.messageHandlers = new Vector<>();
     }
 
@@ -27,7 +27,7 @@ class ChildHandler extends ChannelInitializer<SocketChannel> {
         pipeline.addLast("farmer", new DelimiterBasedFrameDecoder(8192, Delimiters.lineDelimiter()));
         pipeline.addLast("decoder", new StringDecoder(CharsetUtil.UTF_8));
         pipeline.addLast("encoder", new StringEncoder(CharsetUtil.UTF_8));
-        MessageHandler messageHandler = new MessageHandler(messageListener);
+        MessageHandler messageHandler = new MessageHandler(socketEvent);
         pipeline.addLast("onReceive", messageHandler);
         messageHandlers.add(messageHandler);
     }

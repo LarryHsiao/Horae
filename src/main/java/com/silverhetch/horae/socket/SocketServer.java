@@ -17,11 +17,11 @@ class SocketServer implements SocketDevice {
     private int port;
     private boolean running;
 
-    public SocketServer(HoraeUPnP horaeUPnP, MessageListener messageListener) {
+    public SocketServer(HoraeUPnP horaeUPnP, SocketEvent socketEvent) {
         this.port = 8912;
         this.horaeUPnP = horaeUPnP;
         this.eventLoops = new Vector<>();
-        this.childHandler = new ChildHandler(messageListener);
+        this.childHandler = new ChildHandler(socketEvent);
         this.running = false;
     }
 

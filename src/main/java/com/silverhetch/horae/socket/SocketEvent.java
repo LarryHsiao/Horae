@@ -1,5 +1,6 @@
 package com.silverhetch.horae.socket;
 
-public interface MessageListener {
+public interface SocketEvent {
     void onReceive(String message);
+    void onError(Throwable throwable);
 }

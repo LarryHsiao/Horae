@@ -16,8 +16,8 @@ class SocketClient implements SocketDevice {
     private final int priority;
     private boolean running;
 
-    public SocketClient(String host, int port, int priority, MessageListener messageListener) {
-        this.childHandler = new ChildHandler(messageListener);
+    public SocketClient(String host, int port, int priority, SocketEvent socketEvent) {
+        this.childHandler = new ChildHandler(socketEvent);
         this.priority = priority;
         this.running = false;
         this.eventLoops = new ArrayList<>();
