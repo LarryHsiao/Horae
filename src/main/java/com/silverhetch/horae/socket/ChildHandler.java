@@ -37,5 +37,4 @@ class ChildHandler extends ChannelInitializer<SocketChannel> {
             messageHandler.sendMessage(message);
         }
     }
-
 }
