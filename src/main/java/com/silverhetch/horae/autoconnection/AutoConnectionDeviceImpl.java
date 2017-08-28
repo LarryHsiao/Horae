@@ -1,4 +1,4 @@
-package com.silverhetch.horae;
+package com.silverhetch.horae.autoconnection;
 
 import com.silverhetch.horae.socket.SocketEvent;
 import com.silverhetch.horae.socket.SocketConnection;

@@ -1,4 +1,4 @@
-package com.silverhetch.horae;
+package com.silverhetch.horae.autoconnection;
 
 public class DeviceStatusImpl implements DeviceStatus {
     private final boolean master;

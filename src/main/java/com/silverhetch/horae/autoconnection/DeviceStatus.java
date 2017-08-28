@@ -1,4 +1,4 @@
-package com.silverhetch.horae;
+package com.silverhetch.horae.autoconnection;
 
 public interface DeviceStatus {
     boolean isMaster();
