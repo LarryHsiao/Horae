@@ -1,6 +1,6 @@
 package com.silverhetch.horae.autoconnection;
 
-public class DeviceStatusImpl implements DeviceStatus {
+class DeviceStatusImpl implements DeviceStatus {
     private final boolean master;
 
     public DeviceStatusImpl(boolean master) {

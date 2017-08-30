@@ -7,6 +7,7 @@ Dependencies
 ================
 - cling - UPnP/DLNA library for Java and Android 
 - Netty - asynchronous event-driven network application framework
+- gson - Java serialization/deserialization library to convert Java Objects into JSON and back 
 
 
 License
