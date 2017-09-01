@@ -4,6 +4,8 @@
     <bytecodeTargetLevel>
       <module name="as_main" target="1.8" />
       <module name="as_test" target="1.8" />
+      <module name="horae-modules_main" target="1.8" />
+      <module name="horae-modules_test" target="1.8" />
       <module name="horae_main" target="1.7" />
       <module name="horae_test" target="1.7" />
     </bytecodeTargetLevel>
