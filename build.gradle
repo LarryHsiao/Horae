@@ -26,6 +26,6 @@ dependencies {
     compile 'io.netty:netty-all:4.1.14.Final'
     compile 'org.fourthline.cling:cling-core:2.1.1'
     compile 'com.silverhetch:clotho:1.0.0'
-    compile 'com.silverhetch:horae-module-interface:1.0.0'
+    compile 'com.silverhetch:horae-module-interface:1.0.1'
     compile 'com.google.code.gson:gson:2.8.1'
 }

@@ -11,8 +11,8 @@ class ReceivedMessage implements Message {
     }
 
     @Override
-    public int messageType() {
-        return jsonObject.get("messageType").getAsInt();
+    public String messageType() {
+        return jsonObject.get("messageType").getAsString();
     }
 
     @Override

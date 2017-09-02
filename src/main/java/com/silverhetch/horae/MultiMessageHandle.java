@@ -8,15 +8,15 @@ class MultiMessageHandle implements MessageHandle {
     }
 
     @Override
-    public int messageType() {
-        return 0;
+    public String messageType() {
+        return "MultiMessageHandle";
     }
 
     @Override
     public void onReceive(String rawMessage) {
         Message jsonReceivedMessage = new ReceivedMessage(rawMessage);
         for (MessageHandle messageHandle : messageHandles) {
-            if (messageHandle.messageType() == jsonReceivedMessage.messageType()) {
+            if (messageHandle.messageType().equals(jsonReceivedMessage.messageType())) {
                 messageHandle.onReceive(jsonReceivedMessage.content());
             }
         }
