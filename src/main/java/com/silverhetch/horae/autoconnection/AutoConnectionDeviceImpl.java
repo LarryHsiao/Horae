@@ -1,5 +1,6 @@
 package com.silverhetch.horae.autoconnection;
 
+import com.silverhetch.clotho.observable.Observable;
 import com.silverhetch.horae.socket.SocketEvent;
 import com.silverhetch.horae.socket.SocketConnection;
 import com.silverhetch.horae.socket.SocketDevice;
@@ -19,21 +20,26 @@ public class AutoConnectionDeviceImpl implements AutoConnectionDevice, DeviceLis
     private final ControlPoint controlPoint;
     private final SocketConnection socketConnection;
     private final SocketEvent socketEvent;
-    private final DeviceStatusListener deviceStatusListener;
     private final SocketDevice serverDevice;
+    private final Observable<DeviceStatus> deviceStatusObservable;
     private DeviceStatus deviceStatus;
     private SocketDevice targetDevice;
 
 
-    public AutoConnectionDeviceImpl(HoraeUPnP horaeUPnP, SocketConnection socketConnection, SocketEvent socketEvent, DeviceStatusListener deviceStatusListener) {
+    public AutoConnectionDeviceImpl(HoraeUPnP horaeUPnP, SocketConnection socketConnection, SocketEvent socketEvent) {
+        this.deviceStatusObservable = new Observable<>();
         this.remoteDeviceMap = new HashMap<>();
         this.controlPoint = horaeUPnP.createControlPoint(this);
         this.socketConnection = socketConnection;
         this.socketEvent = socketEvent;
-        this.deviceStatusListener = deviceStatusListener;
         this.deviceStatus = new DeviceStatusImpl(true);
         this.serverDevice = socketConnection.server(horaeUPnP, socketEvent);
         this.targetDevice = serverDevice;
+    }
+
+    @Override
+    public Observable<DeviceStatus> observable() {
+        return deviceStatusObservable;
     }
 
     @Override
@@ -104,7 +110,7 @@ public class AutoConnectionDeviceImpl implements AutoConnectionDevice, DeviceLis
             targetDevice = newTarget;
             launchSocketDeviceWithThread();
             deviceStatus = new DeviceStatusImpl(isLocalServer(newTarget));
-            deviceStatusListener.onStatusChanged(deviceStatus);
+            deviceStatusObservable.notifyObservers(deviceStatus);
         }
     }
 

@@ -1,19 +1,20 @@
 package com.silverhetch.horae.example;
 
+import com.silverhetch.clotho.observable.Observer;
 import com.silverhetch.horae.HoraeImpl;
+import com.silverhetch.horae.MessageHandle;
 import com.silverhetch.horae.autoconnection.DeviceStatus;
-import com.silverhetch.horae.autoconnection.DeviceStatusListener;
 import com.silverhetch.horae.upnp.HoraeUPnPImpl;
 import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.fourthline.cling.UpnpServiceImpl;
 
-public class Application extends javafx.application.Application implements DeviceStatusListener {
+public class Application extends javafx.application.Application implements Observer<DeviceStatus> {
     private final HoraeImpl horaeImpl;
 
     public Application() {
-        this.horaeImpl = new HoraeImpl(new HoraeUPnPImpl(new UpnpServiceImpl()), new LogImpl(), this);
+        this.horaeImpl = new HoraeImpl(new HoraeUPnPImpl(new UpnpServiceImpl()), new LogImpl());
     }
 
     @Override
@@ -35,11 +36,12 @@ public class Application extends javafx.application.Application implements Devic
     }
 
     @Override
-    public void onStatusChanged(DeviceStatus status) {
-        System.out.println("Now this device is master? " + status.isMaster());
+    public void onUpdate(com.silverhetch.clotho.observable.Observable<DeviceStatus> observable, DeviceStatus deviceStatus) {
+        System.out.println("Now this device is master? " + deviceStatus.isMaster());
     }
 
     public static void main(String[] args) {
         launch(args);
     }
+
 }

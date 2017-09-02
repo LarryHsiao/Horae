@@ -2,4 +2,4 @@
 .gradle/
 out/
 .idea/workspace.xml
-src/main/java/com/silverhetch/horae/example/
+src/main/java/com/silverhetch/horae/example/*
