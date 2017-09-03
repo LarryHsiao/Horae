@@ -65,6 +65,11 @@ public class AutoConnectionDeviceImpl implements AutoConnectionDevice, DeviceLis
     @Override
     public void sendMessage(String message) {
         targetDevice.sendMessage(message);
+
+        // if this device is master(Server) also send the message to the local MessageHandle.
+        if (deviceStatus.isMaster()) {
+            onReceive(message);
+        }
     }
 
     @Override
