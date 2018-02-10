@@ -1,4 +1,4 @@
-Horae
+Horae (Deprecated)
 ================
 
 An application core that auto connects other device which also running this application discovered in the same local network.
